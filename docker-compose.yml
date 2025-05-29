@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  barracuda-description:
+    image: ros:noetic
+    container_name: barracuda-description
+    command: roscore
+    networks:
+      - ros-net
+
+  cam-to-yolo:
+    build: .
+    container_name: cam-to-yolo
+    networks:
+      - ros-net
+    devices:
+      - /dev/video0:/dev/video0
+    depends_on:
+      - barracuda-description
+
+networks:
+  ros-net:
+    driver: bridge
