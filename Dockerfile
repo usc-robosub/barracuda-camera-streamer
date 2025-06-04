@@ -2,6 +2,12 @@ FROM ros:noetic-ros-base-focal
 
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Step 1: Install tools needed to fetch the key
+RUN apt-get update && apt-get install -y curl gnupg
+
+# Step 2: Add updated ROS GPG key (modern method)
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc -o /etc/apt/trusted.gpg.d/ros.asc
+
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     python3-pip \
