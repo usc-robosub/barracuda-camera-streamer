@@ -1,10 +1,6 @@
-FROM ros:noetic-ros-base
+FROM ros:noetic-ros-base-focal
 
 ENV DEBIAN_FRONTEND=noninteractive
-
-# Fix for expired ROS GPG key
-RUN apt-key del F42ED6FBAB17C654 || true && \
-    curl -sSL http://packages.ros.org/ros.key | apt-key add -
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
