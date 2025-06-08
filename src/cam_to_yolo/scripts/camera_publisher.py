@@ -17,28 +17,33 @@ def main():
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
     cap.set(cv2.CAP_PROP_FPS, 30)
 
+    # Initialize dummy frame for fallback
+    dummy_frame = np.zeros((480, 640, 3), dtype=np.uint8)
+    
     if not cap.isOpened():
-        rospy.logwarn("Camera not found. Using fallback black image.")
-        dummy_frame = (255 * np.zeros((480, 640, 3), dtype=np.uint8))
+        rospy.logwarn("Camera not found at /dev/video0. Using fallback black image.")
 
-    while not rospy.is_shutdown():
+    try:
+        while not rospy.is_shutdown():
+            if cap.isOpened():
+                ret, frame = cap.read()
+                if not ret:
+                    rospy.logwarn("Failed to grab frame, using fallback")
+                    frame = dummy_frame.copy()
+            else:
+                frame = dummy_frame.copy()
+
+            try:
+                ros_img = bridge.cv2_to_imgmsg(frame, "bgr8")
+                pub.publish(ros_img)
+            except Exception as e:
+                rospy.logerr("Error converting/publishing image: %s", str(e))
+
+            rate.sleep()
+    finally:
         if cap.isOpened():
-            ret, frame = cap.read()
-            if not ret:
-                rospy.logwarn("Failed to grab frame")
-                continue
-        else:
-            frame = dummy_frame.copy()
-
-        try:
-            ros_img = bridge.cv2_to_imgmsg(frame, "bgr8")
-            pub.publish(ros_img)
-        except Exception as e:
-            rospy.logerr("Error converting/publishing image: %s", str(e))
-
-        rate.sleep()
-
-    cap.release()
+            cap.release()
+            rospy.loginfo("Camera released")
 
 if __name__ == '__main__':
     try:

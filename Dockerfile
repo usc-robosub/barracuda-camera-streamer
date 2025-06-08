@@ -31,6 +31,9 @@ WORKDIR /root/catkin_ws
 # COPY your ROS package code into the image
 COPY src /root/catkin_ws/src
 
+# Make script executable
+RUN chmod +x /root/catkin_ws/src/cam_to_yolo/scripts/camera_publisher.py
+
 # Initial build to make sure catkin sees it
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && catkin_make"
 
