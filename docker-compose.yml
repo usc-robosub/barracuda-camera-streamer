@@ -2,6 +2,7 @@ services:
   barracuda-camera-streamer:
     build: .
     container_name: barracuda-camera-streamer
-    network-mode: "host"
+    privileged: true
+    network_mode: "host"
     devices:
       - /dev/video0:/dev/video0
