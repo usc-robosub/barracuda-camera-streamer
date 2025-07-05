@@ -29,6 +29,6 @@ jobs:
 
     - name: Build and push (no cache)
       run: |
-        IMAGE_NAME = ghcr.io/${{ github.repository_owner }}/barracuda-camera-streamer:latest
+        IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/barracuda-camera-streamer:latest
         docker build --no-cache -t $IMAGE_NAME .
         docker push $IMAGE_NAME
